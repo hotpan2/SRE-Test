@@ -50,7 +50,7 @@ envsubst < kubernetes-manifest/services/node-deployment.yaml | kubectl apply -f 
 Monitoring/Logging
 --------------------------------------------------------
 
-New Relic Monitoring
+- New Relic Monitoring
 Inject license key via environment variable in deployment.yaml   
 
 - Install Prometheus&Grafana
@@ -71,17 +71,17 @@ helm install elasticsearch elastic/elasticsearch -n logging \
   --set resources.requests.cpu=500m \
   --set resources.requests.memory=1Gi
 
-Install Filebeat / Fluent Bit:
+- Install Filebeat / Fluent Bit:
 helm repo add elastic https://helm.elastic.co
 helm install filebeat elastic/filebeat -n logging \
   --set daemonset.enabled=true \
   --set output.elasticsearch.hosts={http://elasticsearch-master.logging.svc.cluster.local:9200}
 
-Install Kibana:
+- Install Kibana:
 helm install kibana elastic/kibana -n logging \
   --set elasticsearchHosts=http://{elasticservice}:9200
 
-Kibana Dashboard:
+- Kibana Dashboard:
 kubectl port-forward svc/kibana-kibana 5601:5601 -n logging
 
 
