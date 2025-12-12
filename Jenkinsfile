@@ -13,9 +13,9 @@ pipeline {
             steps {
                 checkout scm
                 script {
-                    def BRANCH = env.GIT_BRANCH.replace('origin/', '').replace('/', '-')
-                    def COMMIT = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
-                    def TAG = "${BRANCH}-${COMMIT}"
+                    env.BRANCH = env.GIT_BRANCH.replace('origin/', '').replace('/', '-')
+                    env.COMMIT = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
+                    env.TAG = "${env.BRANCH}-${env.COMMIT}"
                 }
             }
         }
