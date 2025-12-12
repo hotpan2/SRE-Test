@@ -15,12 +15,7 @@ Grafana dashboards
 ---------------------------------------------------------
  CI/CD Workflow
 -------------------------------------------------------
-Stage 1     : Checkout
-Stage 2&3   : Run Unit Test
-Stage 4     : Sonarqube Analysis
-Stage 5     : Build Docker Images
-Stage 6     : Push Images
-Stage 7     : Deploy to Kubernetes
+Checkout -> Run Unit Test -> Sonarqube Analysis -> Build Docker Images -> Push Images ->  Deploy to Kubernetes
 
 ---------------------------------------------------------
  How to Run Locally
