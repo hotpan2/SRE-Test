@@ -11,6 +11,7 @@ Image tagging
 Kubernetes deployments
 Prometheus metrics 
 Grafana dashboards
+
 ---------------------------------------------------------
  CI/CD Workflow
 -------------------------------------------------------
@@ -20,6 +21,7 @@ Stage 4     : Sonarqube Analysis
 Stage 5     : Build Docker Images
 Stage 6     : Push Images
 Stage 7     : Deploy to Kubernetes
+
 ---------------------------------------------------------
  How to Run Locally
 ---------------------------------------------------------
