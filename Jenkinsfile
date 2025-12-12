@@ -20,6 +20,37 @@ pipeline {
             }
         }
 
+        stage('Go Tests') {
+            steps {
+                dir('services/go-service') {
+                    sh 'go test ./... -coverprofile=coverage.out'
+                }
+            }
+        }
+
+        stage('Node Tests') {
+            steps {
+                dir('services/node-service') {
+                    sh 'npm install'
+                    sh 'npm test -- --coverage'
+                }
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('sonarqube-server') {
+                    sh """
+                        sonar-scanner \
+                        -Dsonar.projectKey=sre-test \
+                        -Dsonar.sources=. \
+                        -Dsonar.go.coverage.reportPaths=services/go-service/coverage.out \
+                        -Dsonar.javascript.lcov.reportPaths=services/node-service/coverage/lcov.info
+                    """
+                }
+            }
+        }
+
         stage('Build Images') {
             steps {
                 dir('services/go-service') {
@@ -57,12 +88,31 @@ pipeline {
         }
 
         stage('Deploy to Kubernetes') {
+            when {
+                branch "main"
+            }
             steps {
-                withCredentials([file(credentialsId: 'kubeconfig-file', variable: 'KUBECONFIG_FILE')]) {
-                    sh 'mkdir -p $HOME/.kube'
-                    sh 'cp $KUBECONFIG_FILE $HOME/.kube/config'
-                    sh "kubectl -n sre-test set image deployment/sre-go sre-go=${GO_IMAGE}:${TAG}"
-                    sh "kubectl -n sre-test set image deployment/sre-node sre-node=${NODE_IMAGE}:${TAG}"
+                withCredentials([
+                    file(credentialsId: 'kubeconfig-file', variable: 'KUBECONFIG_FILE')
+                ]) {
+
+                    sh '''
+                        mkdir -p $HOME/.kube
+                        cp $KUBECONFIG_FILE $HOME/.kube/config
+                    '''
+
+                    script {
+                        env.IMAGE_TAG = TAG
+
+                        sh """
+                            echo "Deploying Go service with tag ${IMAGE_TAG}"
+                            export IMAGE_TAG=${IMAGE_TAG}
+                            envsubst < kubernetes-manifest/go-deployment.yaml | kubectl apply -f -
+
+                            echo "Deploying Node service with tag ${IMAGE_TAG}"
+                            envsubst < kubernetes-manifest/node-deployment.yaml | kubectl apply -f -
+                        """
+                    }
                 }
             }
         }

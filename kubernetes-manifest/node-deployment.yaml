@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: sre-node
-          image: hotpen/sre-node:latest  # replaced by Jenkins to hotpen/sre-node:<tag>
+          image: hotpen/sre-node:${IMAGE_TAG}
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
