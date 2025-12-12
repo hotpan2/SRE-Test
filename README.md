@@ -1,5 +1,6 @@
+----------------------------------------------------------------------
 SRE Test – Go & Node Microservices + CI/CD + Kubernetes Deployment
-
+----------------------------------------------------------------------
 This project contains two microservices (Go & Node.js) deployed through a complete CI/CD process using Jenkins, Docker, SonarQube, and Kubernetes.
 
 It includes:
