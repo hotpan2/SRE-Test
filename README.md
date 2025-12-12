@@ -51,6 +51,12 @@ envsubst < kubernetes-manifest/services/node-deployment.yaml | kubectl apply -f 
 Monitoring/Logging
 --------------------------------------------------------
 
+- Monitoring Workflow
+Go/Node App -> Prometheus -> Grafana
+- Logging Workflow
+App -> Filebeat -> Elasticsearch -> Kibana
+
+
 - New Relic Monitoring
 Inject license key via environment variable in deployment.yaml   
 
@@ -63,6 +69,9 @@ helm install monitoring prometheus-community/kube-prometheus-stack -n monitoring
 kubectl port-forward svc/monitoring-grafana -n monitoring 3000:80
 
 - Running ELK (elasticsearch, logstash, kibana)
+
+App → Filebeat → Elasticsearch → Kibana
+
 Install Elasticsearch : 
 helm repo add elastic https://helm.elastic.co
 helm repo update
