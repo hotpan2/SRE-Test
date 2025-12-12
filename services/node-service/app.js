@@ -1,15 +1,34 @@
 const http = require('http');
+const client = require('prom-client');
 
 const port = process.env.PORT || 8081;
 const name = process.env.NODE_SERVICE_NAME || 'node-service';
 
-const server = http.createServer((req, res) => {
+// Enable default Node system metrics
+client.collectDefaultMetrics();
+
+// Custom counter
+const httpRequests = new client.Counter({
+  name: 'node_service_http_requests_total',
+  help: 'Total number of HTTP requests received'
+});
+
+const server = http.createServer(async (req, res) => {
   if (req.url === '/healthz') {
-    res.writeHead(200, {'Content-Type': 'text/plain'});
+    httpRequests.inc();
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
     res.end('OK');
     return;
   }
-  res.writeHead(200, {'Content-Type': 'text/plain'});
+
+  if (req.url === '/metrics') {
+    // Expose Prometheus metrics
+    res.setHeader('Content-Type', client.register.contentType);
+    return res.end(await client.register.metrics());
+  }
+
+  httpRequests.inc();
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
   res.end(`Hello from ${name}\n`);
 });
 
