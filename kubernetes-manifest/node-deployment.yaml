@@ -24,7 +24,7 @@ spec:
       containers:
         - name: sre-node
           image: hotpen/sre-node:${IMAGE_TAG}
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
           readinessProbe:

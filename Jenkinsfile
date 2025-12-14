@@ -5,7 +5,6 @@ pipeline {
         REGISTRY = "docker.io/hotpen"
         GO_IMAGE = "${REGISTRY}/sre-go"
         NODE_IMAGE = "${REGISTRY}/sre-node"
-        NAMESPACE = "sre-test"
     }
 
     stages {
@@ -13,7 +12,7 @@ pipeline {
             steps {
                 checkout scm
                 script {
-                    env.BRANCH = env.GIT_BRANCH.replace('origin/', '').replace('/', '-')
+                    env.BRANCH = env.BRANCH_NAME.replace('/', '-')
                     env.COMMIT = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
                     env.TAG = "${env.BRANCH}-${env.COMMIT}"
                 }

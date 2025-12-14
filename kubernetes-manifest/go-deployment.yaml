@@ -27,7 +27,7 @@ spec:
       containers:
         - name: sre-go
           image: hotpen/sre-go:${IMAGE_TAG}
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
           readinessProbe:
