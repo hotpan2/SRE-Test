@@ -32,14 +32,14 @@ spec:
             - containerPort: 8080
           readinessProbe:
             httpGet:
-              path: /ready
+              path: /healthz
               port: 8080
             initialDelaySeconds: 5
             periodSeconds: 5
             failureThreshold: 3
           livenessProbe:
             httpGet:
-              path: /health
+              path: /healthz
               port: 8080
             initialDelaySeconds: 15
             periodSeconds: 10

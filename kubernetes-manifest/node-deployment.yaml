@@ -26,18 +26,18 @@ spec:
           image: hotpen/sre-node:${IMAGE_TAG}
           imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 8080
+            - containerPort: 8081
           readinessProbe:
             httpGet:
-              path: /ready
-              port: 8080
+              path: /healthz
+              port: 8081
             initialDelaySeconds: 5
             periodSeconds: 5
             failureThreshold: 3
           livenessProbe:
             httpGet:
-              path: /health
-              port: 8080
+              path: /healthz
+              port: 8081
             initialDelaySeconds: 15
             periodSeconds: 10
             failureThreshold: 5
