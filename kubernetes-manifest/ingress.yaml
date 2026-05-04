@@ -7,6 +7,8 @@ metadata:
     kubernetes.io/ingress.class: "nginx"
 spec:
   rules:
+    # Replace <PUBLIC_IP> with your cluster's public IP (e.g., 203.0.113.10)
+    # Example: sre-go.203.0.113.10.nip.io
     - host: sre-go.<PUBLIC_IP>.nip.io
       http:
         paths:
