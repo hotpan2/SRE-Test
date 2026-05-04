@@ -89,7 +89,17 @@ Test the service:
 npm test
 ```
 
-### Building Docker Images
+### Running with Docker Compose (quickest local setup)
+
+```bash
+docker-compose up --build
+```
+
+Services will be available at:
+- Go service: `http://localhost:8080`
+- Node service: `http://localhost:8081`
+
+### Building Docker Images manually
 
 **Go Service:**
 ```bash
