@@ -106,10 +106,10 @@ pipeline {
                         sh """
                             echo "Deploying Go service with tag ${IMAGE_TAG}"
                             export IMAGE_TAG=${IMAGE_TAG}
-                            envsubst < kubernetes-manifest/services/go-deployment.yaml | kubectl apply -f -
+                            envsubst < kubernetes-manifest/go-deployment.yaml | kubectl apply -f -
 
                             echo "Deploying Node service with tag ${IMAGE_TAG}"
-                            envsubst < kubernetes-manifest/services/node-deployment.yaml | kubectl apply -f -
+                            envsubst < kubernetes-manifest/node-deployment.yaml | kubectl apply -f -
                         """
                     }
                 }

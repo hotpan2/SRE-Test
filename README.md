@@ -19,8 +19,8 @@ This project showcases a full-stack SRE implementation featuring:
 
 ```
 services/
-├── go-service/         # Go microservice with Prometheus metrics
-└── node-service/       # Node.js microservice with Express
+├── go-service/         # Go microservice with Prometheus metrics (port 8080)
+└── node-service/       # Node.js microservice with Prometheus metrics (port 8081)
 ```
 
 ### CI/CD Workflow
@@ -103,12 +103,28 @@ docker build -t sre-node:test services/node-service
 
 ### Deploying to Kubernetes
 
-Set your image tag and deploy:
+Apply the namespace first, then set your image tag and deploy:
 ```bash
+kubectl apply -f kubernetes-manifest/namespace.yaml
+
 export IMAGE_TAG=test
-envsubst < kubernetes-manifest/services/go-deployment.yaml | kubectl apply -f -
-envsubst < kubernetes-manifest/services/node-deployment.yaml | kubectl apply -f -
+envsubst < kubernetes-manifest/go-deployment.yaml | kubectl apply -f -
+kubectl apply -f kubernetes-manifest/go-service.yaml
+
+envsubst < kubernetes-manifest/node-deployment.yaml | kubectl apply -f -
+kubectl apply -f kubernetes-manifest/node-service.yaml
 ```
+
+To expose services via Ingress (replace `<PUBLIC_IP>` with your cluster's public IP):
+```bash
+# Example: export PUBLIC_IP=203.0.113.10
+export PUBLIC_IP=<YOUR_CLUSTER_PUBLIC_IP>
+envsubst < kubernetes-manifest/ingress.yaml | kubectl apply -f -
+```
+
+Services will be reachable at:
+- `http://sre-go.<PUBLIC_IP>.nip.io`
+- `http://sre-node.<PUBLIC_IP>.nip.io`
 
 ## 📊 Monitoring Setup
 
@@ -187,15 +203,19 @@ Navigate to `http://localhost:5601` in your browser.
 
 Both services support the following environment variables:
 
-- `PORT`: Service port (default: Go=8080, Node=3000)
+- `PORT`: Service port (default: Go=8080, Node=8081)
 - `NEW_RELIC_LICENSE_KEY`: New Relic APM license key
 - `LOG_LEVEL`: Logging level (debug, info, warn, error)
 
 ### Kubernetes Resources
 
-Manifests are located in `kubernetes-manifest/services/`:
-- `go-deployment.yaml`: Go service deployment and service
-- `node-deployment.yaml`: Node service deployment and service
+Manifests are located in `kubernetes-manifest/`:
+- `namespace.yaml`: Creates the `sre-test` namespace
+- `go-deployment.yaml`: Go service deployment
+- `go-service.yaml`: Go ClusterIP service (port 80 → 8080)
+- `node-deployment.yaml`: Node service deployment
+- `node-service.yaml`: Node ClusterIP service (port 80 → 8081)
+- `ingress.yaml`: NGINX Ingress with nip.io routing
 
 ## 🧪 Testing
 
@@ -226,6 +246,13 @@ The Jenkins pipeline includes:
 - [Grafana Dashboards](https://grafana.com/grafana/dashboards/)
 - [Kubernetes Best Practices](https://kubernetes.io/docs/concepts/configuration/overview/)
 - [ELK Stack Guide](https://www.elastic.co/guide/index.html)
+
+## 🔍 Service Endpoints
+
+| Service | Port | Endpoints |
+|---|---|---|
+| go-service | 8080 | `GET /` greeting, `GET /healthz` health check, `GET /metrics` Prometheus |
+| node-service | 8081 | `GET /` greeting, `GET /healthz` health check, `GET /metrics` Prometheus |
 
 ## 🤝 Contributing
 
